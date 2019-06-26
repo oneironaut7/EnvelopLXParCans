@@ -328,9 +328,7 @@ public static class SplitColor extends EnvelopPattern {
       //par count
       parCnt = 0;
       for (Par par : model.pars) {
-        for (LXPoint p : par.points) {
-          System.out.println("parCnt % 2 >= 1: " + (parCnt % 2 >= 1));
-          System.out.println("parCnt: " + parCnt);
+        for (LXPoint p : par.points) {      
           if (parCnt % 2 >= 1) {
             colors[p.index] = LXColor.hsb( hue1.getValuef() , saturation1.getValuef(),brightness1.getValuef());
           } else {
@@ -355,8 +353,6 @@ public static class SplitColor extends EnvelopPattern {
       parCnt = 0;
       for (Par par : model.pars) {
         for (LXPoint p : par.points) {
-          System.out.println("parCnt % 2 >= 1: " + (parCnt % 2 >= 1));
-          System.out.println("parCnt: " + parCnt);
           if (parCnt % 2 >= 1) {
             colors[p.index] = LXColor.hsb( hue1.getValuef() , saturation1.getValuef(),brightness1.getValuef());
           } else {
@@ -381,8 +377,6 @@ public static class SplitColor extends EnvelopPattern {
       parCnt = 0;
       for (Par par : model.pars) {
         for (LXPoint p : par.points) {
-          System.out.println("parCnt % 2 >= 1: " + (parCnt % 2 >= 1));
-          System.out.println("parCnt: " + parCnt);
           if (parCnt % 2 >= 1) {
             colors[p.index] = LXColor.hsb( hue1.getValuef() , saturation1.getValuef(),brightness1.getValuef());
           } else {
@@ -407,8 +401,6 @@ public static class SplitColor extends EnvelopPattern {
         parCnt = 0;
         for (Par par : model.pars) {
           for (LXPoint p : par.points) {
-            System.out.println("parCnt % 2 >= 1: " + (parCnt % 2 >= 1));
-            System.out.println("parCnt: " + parCnt);
             if (parCnt % 2 >= 1) {
               colors[p.index] = LXColor.hsb( hue1.getValuef() , saturation1.getValuef(),brightness1.getValuef());
             } else {
