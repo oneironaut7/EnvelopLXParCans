@@ -1,6 +1,6 @@
 {
   "version": "0.1",
-  "timestamp": 1561509807552,
+  "timestamp": 1561655163619,
   "engine": {
     "id": 1,
     "class": "heronarts.lx.LXEngine",
@@ -15,7 +15,7 @@
       "crossfader": 0.5,
       "crossfaderBlendMode": 0,
       "speed": 1.0,
-      "focusedChannel": 1,
+      "focusedChannel": 0,
       "cueA": false,
       "cueB": false,
       "multithreaded": true,
@@ -45,7 +45,7 @@
         "parameters": {
           "label": "Gradient",
           "arm": false,
-          "selected": false,
+          "selected": true,
           "enabled": true,
           "cue": false,
           "fader": 1.0,
@@ -97,7 +97,7 @@
           }
         ],
         "clips": [],
-        "patternIndex": 0,
+        "patternIndex": 4,
         "patterns": [
           {
             "id": 63,
@@ -142,6 +142,71 @@
               "triggers": []
             },
             "autoCycleEnabled": true
+          },
+          {
+            "id": 35458,
+            "class": "EnvelopLXParCans$TwoColorPaletteBlend",
+            "modulationColor": -9764609,
+            "parameters": {
+              "label": "TwoColorPaletteBlend",
+              "Hue 1": 227.16999695077538,
+              "Sat 1": 100.0,
+              "Bri 1": 100.0,
+              "Size": 50,
+              "Hue 2": 356.4100040923804,
+              "Sat 2": 100.0,
+              "Bri 2": 100.0,
+              "Period": 10.0,
+              "Fixed": true,
+              "Dir": true
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
+          },
+          {
+            "id": 37150,
+            "class": "EnvelopLXParCans$LSDee",
+            "modulationColor": -16722945,
+            "parameters": {
+              "label": "LSDee",
+              "Scale": 10.0,
+              "Speed": 4.0,
+              "Range": 1.0
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
+          },
+          {
+            "id": 38843,
+            "class": "EnvelopLXParCans$TwoColorPaletteBlendTest",
+            "modulationColor": -16711682,
+            "parameters": {
+              "label": "TwoColorPaletteBlendTest",
+              "Hue 1": 187.67999582737684,
+              "Sat 1": 100.0,
+              "Bri 1": 100.0,
+              "Size": 50,
+              "Hue 2": 1.0,
+              "Sat 2": 100.0,
+              "Bri 2": 100.0,
+              "Period": 50.0,
+              "Fixed": true,
+              "Dir": true
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
           }
         ]
       },
@@ -152,8 +217,8 @@
         "parameters": {
           "label": "Ceres",
           "arm": false,
-          "selected": true,
-          "enabled": true,
+          "selected": false,
+          "enabled": false,
           "cue": false,
           "fader": 1.0,
           "crossfadeGroup": 0,
@@ -212,7 +277,7 @@
           "fader": 1.0,
           "crossfadeGroup": 0,
           "blendMode": 1,
-          "midiMonitor": false,
+          "midiMonitor": true,
           "midiChannel": 16,
           "autoCycleEnabled": false,
           "autoCycleMode": 0,
@@ -880,9 +945,9 @@
           "selected": false,
           "enabled": false,
           "cue": false,
-          "fader": 0.6614173054695129,
+          "fader": 1.0,
           "crossfadeGroup": 0,
-          "blendMode": 1,
+          "blendMode": 4,
           "midiMonitor": false,
           "midiChannel": 16,
           "autoCycleEnabled": false,
@@ -894,7 +959,7 @@
         },
         "effects": [],
         "clips": [],
-        "patternIndex": 1,
+        "patternIndex": 2,
         "patterns": [
           {
             "id": 28035,
@@ -920,6 +985,36 @@
               "period": 50000.0,
               "size": 12.242399720942977,
               "density": 57.24999927915632
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
+          },
+          {
+            "id": 32078,
+            "class": "EnvelopLXParCans$TubeSequence",
+            "modulationColor": -65347,
+            "parameters": {
+              "label": "TubeSequence",
+              "Seq": 5
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
+          },
+          {
+            "id": 33766,
+            "class": "EnvelopLXParCans$TubeSelect",
+            "modulationColor": -16740609,
+            "parameters": {
+              "label": "TubeSelect",
+              "Tube": 1
             },
             "modulation": {
               "modulators": [],
@@ -1100,51 +1195,8 @@
       }
     },
     "modulation": {
-      "modulators": [
-        {
-          "id": 28624,
-          "class": "heronarts.lx.modulator.VariableLFO",
-          "modulationColor": -16767233,
-          "parameters": {
-            "label": "LFO 2",
-            "running": true,
-            "trigger": false,
-            "loop": true,
-            "tempoSync": false,
-            "tempoMultiplier": 5,
-            "tempoLock": true,
-            "clockMode": 0,
-            "periodFast": 3282.644180929473,
-            "periodSlow": 10000.0,
-            "wave": 3,
-            "skew": 0.0,
-            "shape": 0.0,
-            "phase": 0.0,
-            "exp": 0.0
-          },
-          "basis": 0.7861317772441965
-        }
-      ],
-      "modulations": [
-        {
-          "source": {
-            "id": 28624
-          },
-          "target": {
-            "componentId": 28621,
-            "parameterPath": "Yaw"
-          },
-          "id": 28625,
-          "class": "heronarts.lx.parameter.LXCompoundModulation",
-          "modulationColor": -58880,
-          "parameters": {
-            "label": "",
-            "enabled": true,
-            "Polarity": 0,
-            "Range": 1.0
-          }
-        }
-      ],
+      "modulators": [],
+      "modulations": [],
       "triggers": []
     },
     "osc": {
@@ -1174,9 +1226,7 @@
       "paletteExpanded": true,
       "cameraExpanded": true,
       "clipViewVisible": true,
-      "modulatorExpanded": {
-        "28624": true
-      },
+      "modulatorExpanded": {},
       "preview": {
         "mode": 0,
         "animation": false,

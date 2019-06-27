@@ -3018,3 +3018,59 @@ public class Snakes extends EnvelopPattern {
     }
   }
 }
+
+@LXCategory("Pattern") 
+public class TubeSequence extends EnvelopPattern {
+  public String getAuthor() {
+    return "Tom Montagliano";
+  }
+  
+  public final DiscreteParameter seq_num = 
+    new DiscreteParameter("Seq",0,0,49);
+  
+    int seqCnt = 0;
+    
+    
+  public TubeSequence(LX lx) {
+    super(lx);
+    addParameter("Seq", this.seq_num);
+  }
+  
+  public void run(double deltaMs) {
+    
+    int seqCnt = 0;
+    int tnum = (int) seq_num.getValue(); 
+    //This dictates which number in the sequence each arra
+    int[] seqArr = new int[]{ 0,24,1,25,   2,26,3,27,   4,28,5,29,   6,30,7,31,   8,32,9,33,   10,34,11,35,   
+                              12,36,13,37, 14,38,15,39, 16,40,17,41, 18,42,19,43, 20,44,21,45, 22,46,23,47};
+                             
+                                                      
+    Rail[] tubeSeq = new Rail[48];
+    
+    //populate dummy arr with sequence; doesnt work correctly unless populated first? (Shruggie guy)
+    for (Rail rail : model.rails) {
+      tubeSeq[seqCnt] = rail;
+      ++seqCnt;
+    }  
+    
+    seqCnt = 0;
+    
+    //populate rail arr with sequence
+    for (Rail rail : model.rails) {
+      tubeSeq[seqArr[seqCnt]] = rail;
+      ++seqCnt;
+    }  
+    
+    //light up only rails in sequence
+    for (int i = 0; i < 49; ++i){
+      if (i <= tnum && i != 0) {
+        setColor(tubeSeq[i-1], #FFFFFF);
+        } else if (i != 0){
+        setColor(tubeSeq[i-1], #000000);
+        } else {
+        setColor(tubeSeq[i], #000000);  
+        
+        }
+    }  
+  }
+}

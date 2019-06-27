@@ -151,6 +151,7 @@ public class LSD extends LXEffect {
       } else {
         colors[p.index] = c2;
       }
+      
     }
   }
 }
