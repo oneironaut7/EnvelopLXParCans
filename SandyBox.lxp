@@ -1,6 +1,6 @@
 {
   "version": "0.1",
-  "timestamp": 1561655163619,
+  "timestamp": 1561757672241,
   "engine": {
     "id": 1,
     "class": "heronarts.lx.LXEngine",
@@ -32,7 +32,7 @@
         "hueMode": 1,
         "color/brightness": 100.0,
         "color/saturation": 100.0,
-        "color/hue": 53.60132126598958,
+        "color/hue": 62.2262600567834,
         "period": 30000.0,
         "range": 78.75
       }
@@ -149,16 +149,16 @@
             "modulationColor": -9764609,
             "parameters": {
               "label": "TwoColorPaletteBlend",
-              "Hue 1": 227.16999695077538,
+              "Hue 1": 173.31999815441668,
               "Sat 1": 100.0,
               "Bri 1": 100.0,
-              "Size": 50,
-              "Hue 2": 356.4100040923804,
+              "Size": 167,
+              "Hue 2": 11.769999759271741,
               "Sat 2": 100.0,
               "Bri 2": 100.0,
-              "Period": 10.0,
-              "Fixed": true,
-              "Dir": true
+              "Period": 20.0,
+              "Fixed": false,
+              "Dir": false
             },
             "modulation": {
               "modulators": [],
@@ -185,19 +185,22 @@
             "autoCycleEnabled": true
           },
           {
-            "id": 38843,
-            "class": "EnvelopLXParCans$TwoColorPaletteBlendTest",
-            "modulationColor": -16711682,
+            "id": 44009,
+            "class": "EnvelopLXParCans$ThreeColorPaletteBlend",
+            "modulationColor": -48384,
             "parameters": {
-              "label": "TwoColorPaletteBlendTest",
-              "Hue 1": 187.67999582737684,
+              "label": "ThreeColorPaletteBlend",
+              "Hue 1": 1.0,
               "Sat 1": 100.0,
               "Bri 1": 100.0,
-              "Size": 50,
-              "Hue 2": 1.0,
+              "Size": 18,
+              "Hue 2": 173.31999614834785,
               "Sat 2": 100.0,
               "Bri 2": 100.0,
               "Period": 50.0,
+              "Hue 3": 223.5799950249493,
+              "Sat 3": 100.0,
+              "Bri 3": 100.0,
               "Fixed": true,
               "Dir": true
             },
@@ -875,7 +878,43 @@
               "label": "Jitters",
               "period": 2000.0,
               "size": 20.0,
-              "contrast": 195.0000023469329
+              "contrast": 50.0
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
+          },
+          {
+            "id": 42295,
+            "class": "EnvelopLXParCans$MeltDown",
+            "modulationColor": -20992,
+            "parameters": {
+              "label": "MeltDown",
+              "speed": 256.0,
+              "level": 0.0,
+              "auto": true,
+              "melt": 0.5
+            },
+            "modulation": {
+              "modulators": [],
+              "modulations": [],
+              "triggers": []
+            },
+            "autoCycleEnabled": true
+          },
+          {
+            "id": 42302,
+            "class": "EnvelopLXParCans$MeltOut",
+            "modulationColor": -16744449,
+            "parameters": {
+              "label": "MeltOut",
+              "speed": 256.0,
+              "level": 0.0,
+              "auto": true,
+              "melt": 0.5
             },
             "modulation": {
               "modulators": [],
@@ -1238,9 +1277,9 @@
         "centerPoint": false,
         "camera": {
           "active": false,
-          "radius": 483.43418491529667,
-          "theta": -2.450999999999989,
-          "phi": 0.07871667385101577,
+          "radius": 361.8318887719781,
+          "theta": -2.237999999999963,
+          "phi": 0.1087166738510158,
           "x": 0.0,
           "y": 20.997373580932617,
           "z": 0.0
@@ -1248,9 +1287,9 @@
         "cue": [
           {
             "active": false,
-            "radius": 483.43418491529667,
-            "theta": -2.450999999999989,
-            "phi": 0.07871667385101577,
+            "radius": 361.8318887719781,
+            "theta": -2.237999999999963,
+            "phi": 0.1087166738510158,
             "x": 0.0,
             "y": 20.997373580932617,
             "z": 0.0

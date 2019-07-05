@@ -485,18 +485,42 @@ public class TwoColorPaletteBlend extends EnvelopPattern {
     
     int numPixZ = numPix -1 ; // zero based number of pixels
     int cnt = 0; //count value
+    int cntReset = 0; //Reset count value
     boolean blendModeUp = true; // if true increment, if false decrement
     boolean s = set.getValueb();
     boolean dir = direction.getValueb();
     float per = period.getValuef();
-    float inc = increment.getValuef() /numPix; //divide by number of pixel for to eliminate a seam
+    float inc = increment.getValuef() /(numPix); //divide by number of pixel for to eliminate a seam
+    int cycleReset = Math.round((numPix)/increment.getValuef()) ; //reset accum at set intervals to avoid quantitative error
     float accum = 0; //accumulator for blend values
-    //float blend = 0.5;
+    float accumReset = 0.5; //accumulator for blend values
+    accum = 0.5; //set inital value of accumulator to ensure there are no seams
     
     
     if (s || inc != newInc) {
       for (LXPoint p :  model.points) {
         newInc = inc;
+       
+        //increments or decrements
+        if (blendModeUp){
+          if(cnt != 0){
+            accum = accum + inc;
+            blend[cnt] = min(1.0,accum); //prevent overflow
+          } else {
+            blend[cnt] = min(1.0,accum); //don't increment first number
+          }  
+        } else {   
+          accum = accum - inc;
+          blend[cnt] = max(0.0, accum); //prevent underflow
+        }  
+        
+        ++cntReset;
+        //evaluate whether cycle is complete
+        if (cntReset >= cycleReset){
+          accum = accumReset;
+          cntReset = 0;
+        }  
+        
         //sets blend mode
         if (accum >= 1) {
           blendModeUp = false;
@@ -504,23 +528,18 @@ public class TwoColorPaletteBlend extends EnvelopPattern {
         } else if (accum <= 0) {
           blendModeUp = true;
           blend[cnt] = 0;
-        }  
-       
-        //increments or decrements
-        if (blendModeUp){
-          accum = accum + inc;
-          blend[cnt] = min(1.0,accum); //prevent overflow
-        } else {
-          accum = accum - inc;
-          blend[cnt] = max(0.0,accum); //prevent underflow
-        }  
+        } 
         ++cnt;
+        
         
         int c1 = LX.hsb(hue1.getValuef(), sat1.getValuef(),bri1.getValuef());
         int c2 = LX.hsb(hue2.getValuef(), sat2.getValuef(),bri2.getValuef());
         
         colors[p.index] = LXColor.lerp(c1, c2, blend[p.index]); 
       }
+      System.out.println("blend[0]: " + blend[0]);
+      System.out.println("blend[numPixZ]: " + blend[numPixZ]);
+      System.out.println("blend[768]: " + blend[768]);
     } else {
       
       //controls the period/speed
@@ -559,6 +578,177 @@ public class TwoColorPaletteBlend extends EnvelopPattern {
     }  
   }
 }
+
+@LXCategory("Color")
+public class ThreeColorPaletteBlend extends EnvelopPattern {
+  
+  //global variables
+  public double curStepTime = 0.0;
+  public int numPix = model.points.length; 
+  public float[] blend = new float[numPix];
+  public float newInc = 0;
+  
+  //knobs and such
+  public final CompoundParameter hue1 = new CompoundParameter("Hue 1", 1, 1. , 360.);
+  public final CompoundParameter sat1 = new CompoundParameter("Sat 1", 100, 0. , 100.);
+  public final CompoundParameter bri1 = new CompoundParameter("Bri 1", 100, 0. , 100.);
+  public final DiscreteParameter increment = (DiscreteParameter)
+    new DiscreteParameter("Size", 50, 1, 1000)
+    .setExponent(2);
+  public final CompoundParameter hue2 = new CompoundParameter("Hue 2", 1, 1. , 360.);
+  public final CompoundParameter sat2 = new CompoundParameter("Sat 2", 100, 0. , 100.);
+  public final CompoundParameter bri2 = new CompoundParameter("Bri 2", 100, 0. , 100.);
+  public final CompoundParameter hue3 = new CompoundParameter("Hue 3", 1, 1. , 360.);
+  public final CompoundParameter sat3 = new CompoundParameter("Sat 3", 100, 0. , 100.);
+  public final CompoundParameter bri3 = new CompoundParameter("Bri 3", 100, 0. , 100.);
+  public final BooleanParameter set = new BooleanParameter("Fixed",true);
+  public final BooleanParameter direction = new BooleanParameter("Dir",true);
+  public final CompoundParameter period = (CompoundParameter)
+    new CompoundParameter("Period", 50, 20, 1000)
+    .setExponent(3.0)
+    .setDescription("Speed of the Movement");
+  final LXModulator pos = startModulator(new SinLFO(0.9, 1.1, period));
+  
+  public ThreeColorPaletteBlend(LX lx) {
+    super(lx);
+    addParameter(hue1);
+    addParameter(sat1);
+    addParameter(bri1);
+    addParameter(increment);
+    addParameter(hue2);
+    addParameter(sat2);
+    addParameter(bri2);
+    addParameter(period);
+    addParameter(hue3);
+    addParameter(sat3);
+    addParameter(bri3);
+    addParameter(set);
+    addParameter(direction);
+  }
+  
+  
+  public void run(double deltaMs) {
+    
+    curStepTime = curStepTime +deltaMs; //adds time
+    
+    int numPixZ = numPix -1 ; // zero based number of pixels
+    int cnt = 0; //count value
+    int cntReset = 0; //Reset count value
+    boolean blendModeUp = true; // if true increment, if false decrement
+    boolean s = set.getValueb();
+    boolean dir = direction.getValueb();
+    float per = period.getValuef();
+    float inc = increment.getValuef() /(numPix); //divide by number of pixel for to eliminate a seam
+    int cycleReset = Math.round((numPix)/increment.getValuef()) ; //reset accum at set intervals to avoid quantitative error
+    int cycleCnt = 0; //represents number of cycles
+    float accum = 0; //accumulator for blend values
+    float accumReset = 0.5; //accumulator for blend values
+    accum = 0.5; //set inital value of accumulator to ensure there are no seams
+    
+    
+    if (s || inc != newInc) {
+      for (LXPoint p :  model.points) {
+        newInc = inc;
+       
+        //increments or decrements
+        if (blendModeUp){
+          if(cnt != 0){
+            accum = accum + inc;
+            blend[cnt] = min(1.0,accum); //prevent overflow
+          } else {
+            blend[cnt] = min(1.0,accum); //don't increment first number
+          }  
+        } else {   
+          accum = accum - inc;
+          blend[cnt] = max(0.0, accum); //prevent underflow
+        }  
+        
+        
+        //evaluate whether cycle is complete
+        if (cntReset >= cycleReset){
+          accum = accumReset;
+          cntReset = 0;
+        }  
+        
+        //sets blend mode
+        if (accum >= 1) {
+          blendModeUp = false;
+          blend[cnt] = 1;
+          ++cycleCnt;
+           System.out.println("Going Down: " +cycleCnt);
+        } else if (accum <= 0) {
+          blendModeUp = true;
+          blend[cnt] = 0;
+          ++cycleCnt;
+          System.out.println("Going Up: " +cycleCnt);
+        } 
+        ++cnt;
+        
+        
+        int c1 = LX.hsb(hue1.getValuef(), sat1.getValuef(),bri1.getValuef());
+        int c2 = LX.hsb(hue2.getValuef(), sat2.getValuef(),bri2.getValuef());
+        int c3 = LX.hsb(hue3.getValuef(), sat3.getValuef(),bri3.getValuef());
+        
+        if (cycleCnt == 0){
+          colors[p.index] = LXColor.lerp(c1, c2, blend[p.index]);
+        } else if (cycleCnt == 1){
+          colors[p.index] = LXColor.lerp(c3, c2, blend[p.index]);  
+        } else if (cycleCnt == 2){
+          colors[p.index] = LXColor.lerp(c3, c1, blend[p.index]); 
+        } else if (cycleCnt == 3){
+          colors[p.index] = LXColor.lerp(c2, c1, blend[p.index]); 
+        } else if (cycleCnt == 4){
+          colors[p.index] = LXColor.lerp(c2, c1, blend[p.index]); 
+        } else if (cycleCnt == 5){
+          colors[p.index] = LXColor.lerp(c2, c3, blend[p.index]); 
+        }  else {
+          colors[p.index] = LXColor.lerp(c1, c2, blend[p.index]);
+          cycleCnt = 0;
+        }  
+        ++cntReset;
+      }
+      cycleCnt = 0;
+     // System.out.println("blend[0]: " + blend[0]);
+     // System.out.println("blend[numPixZ]: " + blend[numPixZ]);
+      //System.out.println("blend[768]: " + blend[768]);
+    } else {
+      
+      //controls the period/speed
+      if ( curStepTime >= per){ 
+        curStepTime = 0;
+        //controls the direction
+        if (dir){
+          for (LXPoint p :  model.points) {
+            if (p.index != numPixZ) {
+            blend[p.index] = blend[p.index+1];
+            } else {
+            blend[p.index] = blend[0];
+            }
+            int c1 = LX.hsb(hue1.getValuef(), sat1.getValuef(),bri1.getValuef());
+            int c2 = LX.hsb(hue2.getValuef(), sat2.getValuef(),bri2.getValuef());
+        
+            colors[p.index] = LXColor.lerp(c1, c2, blend[p.index]);  
+            
+          //System.out.println("blend[p.index]: " + blend[p.index]);
+          //System.out.println("p.index: " + p.index);
+          }
+        } else {  
+         for (LXPoint p :  model.points) {
+            if (p.index != numPixZ) {
+            blend[numPixZ-p.index] = blend[(numPixZ-p.index)-1];
+            } else {
+            blend[numPixZ-p.index] =blend[numPixZ];
+            }
+            int c1 = LX.hsb(hue1.getValuef(), sat1.getValuef(),bri1.getValuef());
+            int c2 = LX.hsb(hue2.getValuef(), sat2.getValuef(),bri2.getValuef());
+        
+            colors[p.index] = LXColor.lerp(c1, c2, blend[p.index]);  
+          } 
+        }
+      }
+    }  
+  }
+} 
 
 @LXCategory("Color")
 public class LSDee extends EnvelopPattern {
@@ -607,5 +797,750 @@ public class LSDee extends EnvelopPattern {
        amount = 0.18;
     }
    
+  }
+}
+
+@LXCategory("Color")
+public class Plasma extends EnvelopPattern {
+  
+  public String getAuthor() {
+    return "Fin McCarthy";
+  }
+  
+  //by Fin McCarthy
+  // finchronicity@gmail.com
+  
+  //variables
+  int brightness = 255;
+  float red, green, blue;
+  float shade;
+  float movement = 0.1;
+  
+  PlasmaGenerator plasmaGenerator;
+  
+  long framecount = 0;
+    
+    //adjust the size of the plasma
+    public final CompoundParameter size =
+    new CompoundParameter("Size", 0.8, 0.1, 1)
+    .setDescription("Size");
+  
+    //variable speed of the plasma. 
+    public final SinLFO RateLfo = new SinLFO(
+      2, 
+      20, 
+      45000     
+    );
+  
+    //moves the circle object around in space
+    public final SinLFO CircleMoveX = new SinLFO(
+      model.xMax*-1, 
+      model.xMax*2, 
+      40000     
+    );
+    
+      public final SinLFO CircleMoveY = new SinLFO(
+      model.xMax*-1, 
+      model.yMax*2, 
+      22000 
+    );
+
+  private final LXUtils.LookupTable.Sin sinTable = new LXUtils.LookupTable.Sin(255);
+  private final LXUtils.LookupTable.Cos cosTable = new LXUtils.LookupTable.Cos(255);
+  
+  public Plasma(LX lx) {
+    super(lx);
+    
+    addParameter(size);
+    
+    startModulator(CircleMoveX);
+    startModulator(CircleMoveY);
+    startModulator(RateLfo);
+    
+    plasmaGenerator =  new PlasmaGenerator(model.xMax, model.yMax, model.zMax);
+    UpdateCirclePosition();
+    
+    //PrintModelGeometory();
+}
+    
+  public void run(double deltaMs) {
+    for (Rail rail : venue.rails) {
+      
+      //GET A UNIQUE SHADE FOR THIS PIXEL
+
+      //convert this point to vector so we can use the dist method in the plasma generator
+      float _size = size.getValuef(); 
+      for (LXPoint p : rail.points) {
+        //combine the individual plasma patterns 
+        shade = plasmaGenerator.GetThreeTierPlasma(p, _size, movement );
+   
+        //separate out a red, green and blue shade from the plasma wave 
+        red = map(sinTable.sin(shade*PI), -1, 1, 0, brightness);
+        green =  map(sinTable.sin(shade*PI+(2*cosTable.cos(movement*490))), -1, 1, 0, brightness); //*cos(movement*490) makes the colors morph over the top of each other 
+        blue = map(sinTable.sin(shade*PI+(4*sinTable.sin(movement*300))), -1, 1, 0, brightness);
+  
+        //ready to populate this color!
+        setColor(rail, LXColor.rgb((int)red,(int)green, (int)blue));
+      }
+    }
+    
+  movement =+ ((float)RateLfo.getValue() / 1000); //advance the animation through time. 
+   
+  UpdateCirclePosition();
+    
+  }
+  
+  void UpdateCirclePosition()
+  {
+      plasmaGenerator.UpdateCirclePosition(
+      (float)CircleMoveX.getValue(), 
+      (float)CircleMoveY.getValue(),
+      0
+      );
+  }
+
+
+}
+
+@LXCategory("Color")
+public class PlasmaY extends EnvelopPattern {
+  
+  public String getAuthor() {
+    return "Fin McCarthy";
+  }
+  
+  //by Fin McCarthy
+  // finchronicity@gmail.com
+  
+  //variables
+  int brightness = 255;//set brightness to max
+  float red, green, blue;
+  float shade;
+  float movement = 0.1;
+  
+  //variable calling the helper class
+  PlasmaGenerator plasmaGenerator;
+  
+  long framecount = 0;
+    
+    //adjust the size of the plasma
+    public final CompoundParameter size =
+    new CompoundParameter("Size", 0.8, 0.1, 1)
+    .setDescription("Size");
+  
+    //variable speed of the plasma. 
+    public final SinLFO RateLfo = new SinLFO(
+      2, 
+      20, 
+      45000     
+    );
+  
+    //moves the circle object around in space
+    public final SinLFO CircleMoveX = new SinLFO(
+      model.xMax*-1, 
+      model.xMax*2, 
+      40000     
+    );
+    
+      public final SinLFO CircleMoveZ = new SinLFO(
+      model.xMax*-1, 
+      model.zMax*2, 
+      22000 
+    );
+
+  private final LXUtils.LookupTable.Sin sinTable = new LXUtils.LookupTable.Sin(255);
+  private final LXUtils.LookupTable.Cos cosTable = new LXUtils.LookupTable.Cos(255);
+  
+  //constructor
+  public PlasmaY(LX lx) {
+    super(lx);
+    
+    addParameter(size);
+    
+    startModulator(CircleMoveX);
+    startModulator(CircleMoveZ);
+    startModulator(RateLfo);
+    
+    plasmaGenerator =  new PlasmaGenerator(model.xMax, model.yMax, model.zMax);
+    UpdateCirclePosition();
+    
+    //PrintModelGeometory();
+}
+    
+  //main method
+  public void run(double deltaMs) {
+    //System.out.println("frame rate: " + Math.round(1000/deltaMs));
+    for (Rail rail : venue.rails) {
+      //GET A UNIQUE SHADE FOR THIS PIXEL
+
+      //convert this point to vector so we can use the dist method in the plasma generator
+      float _size = size.getValuef(); 
+      for (LXPoint p : rail.points) {
+        //combine the individual plasma patterns 
+        shade = plasmaGenerator.GetThreeTierPlasma(p, _size, movement );
+   
+        //separate out a red, green and blue shade from the plasma wave 
+        red = map(sinTable.sin(shade*PI), -1, 1, 0, brightness);
+        green =  map(sinTable.sin(shade*PI+(2*cosTable.cos(movement*490))), -1, 1, 0, brightness); //*cos(movement*490) makes the colors morph over the top of each other 
+        blue = map(sinTable.sin(shade*PI+(4*sinTable.sin(movement*300))), -1, 1, 0, brightness);
+  
+        //ready to populate this color!
+        colors[p.index]= LXColor.rgba( (int) red,(int)green, (int)blue,254);
+        //setColor(p, LXColor.rgb((int)red,(int)green, (int)blue));
+      }
+    }
+    
+   movement =+ ((float)RateLfo.getValue() / 1000); //advance the animation through time. 
+   
+  UpdateCirclePosition();
+    
+  }
+  
+  //method to update circle position
+  void UpdateCirclePosition()
+  {
+      plasmaGenerator.UpdateCirclePosition(
+      (float)CircleMoveX.getValue(), 
+      (float)CircleMoveZ.getValue(),
+      0
+      );
+  }
+
+
+}
+
+
+
+// This is a helper class to generate plasma. 
+
+public static class PlasmaGenerator {
+      
+    //NOTE: Geometry is FULL scale for this model. Dont use normalized values. 
+      
+      float xmax, ymax, zmax;
+      LXVector circle; 
+      
+      //sets up table of 255 points that represent a sin wave in radians
+      static final LXUtils.LookupTable.Sin sinTable = new LXUtils.LookupTable.Sin(255);
+      
+      //methods
+      float SinVertical(LXVector p, float size, float movement)
+      {
+        return sinTable.sin(   ( p.x / xmax / size) + (movement / 100 ));
+      }
+      
+      float SinRotating(LXVector p, float size, float movement)
+      {
+        
+        return sinTable.sin( ( ( p.y / ymax / size) * sin( movement /66 )) + (p.z / zmax / size) * (cos(movement / 100))  ) ;
+      }
+       
+      float SinCircle(LXVector p, float size, float movement)
+      {
+        float distance =  p.dist(circle);
+        return sinTable.sin( (( distance + movement + (p.z/zmax) ) / xmax / size) * 2 ); 
+      }
+    
+      float GetThreeTierPlasma(LXPoint p, float size, float movement)
+      {
+        LXVector pointAsVector = new LXVector(p);
+        return  SinVertical(  pointAsVector, size, movement) +
+        SinRotating(  pointAsVector, size, movement) +
+        SinCircle( pointAsVector, size, movement);
+      }
+      
+      //contructor
+      public PlasmaGenerator(float _xmax, float _ymax, float _zmax)
+      {
+        xmax = _xmax;
+        ymax = _ymax;
+        zmax = _zmax;
+        circle = new LXVector(0,0,0);
+      }
+      
+      //main method
+      void UpdateCirclePosition(float x, float y, float z)
+      {
+        circle.x = x;
+        circle.y = y;
+        circle.z = z;
+      }
+    
+}//end plasma generator
+
+@LXCategory("Color")
+public class Plasma3Color extends EnvelopPattern {
+  
+  public String getAuthor() {
+    return "Fin McCarthy";
+  }
+  
+  //by Fin McCarthy
+  // finchronicity@gmail.com
+  
+  //variables
+  int brightness = 255;//set brightness to max
+  float red, green, blue;
+  float shade,shade1, shade2, shade3;
+  float movement = 0.1;
+  float slice1 =0;
+  float slice2 =(2*PI)/3;
+  float slice3 =(4*PI)/3;
+  
+  //variable calling the helper class
+  PlasmaGeneratorY plasmaGenerator;
+  
+  long framecount = 0;
+    
+    //adjust the size of the plasma
+    public final CompoundParameter size =
+    new CompoundParameter("Size", 1.0, 0.1, 2.0)
+    .setDescription("Size");
+    
+    public final CompoundParameter r1 = new CompoundParameter("R1 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter g1 = new CompoundParameter("G1 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter b1 = new CompoundParameter("B1 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter rate = new CompoundParameter("Rate", 22000.0, 1000.0, 60000.0);
+    public final CompoundParameter r2 = new CompoundParameter("R2 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter g2 = new CompoundParameter("G2 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter b2 = new CompoundParameter("B2 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter r3 = new CompoundParameter("R3 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter g3 = new CompoundParameter("G3 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter b3 = new CompoundParameter("B3 Bri", 255.0, 0.0, 255.0);
+    //public final CompoundParameter min = new CompoundParameter("Min", 2.0, 2.0, 20.0);
+   // public final CompoundParameter max = new CompoundParameter("Max", 20.0, 2.0, 20.0);*/
+    //variable speed of the plasma. 
+    public final SinLFO RateLfo = new SinLFO(
+      2, //start
+      20, //stop
+       new FunctionalParameter() {
+    public double getValue() {
+      return rate.getValue();
+    }
+  });
+  
+    //moves the circle object around in space
+    public final SinLFO CircleMoveX = new SinLFO(
+      model.xMax*-1, 
+      model.xMax*2, 
+      22000//40000     
+    );
+    
+      public final SinLFO CircleMoveY = new SinLFO(
+      model.zMax*-1, 
+      model.zMax*2, 
+      22000 
+    );
+
+  private final LXUtils.LookupTable.Sin sinTable = new LXUtils.LookupTable.Sin(255);
+  private final LXUtils.LookupTable.Cos cosTable = new LXUtils.LookupTable.Cos(255);
+  
+  
+  //constructor
+  public Plasma3Color(LX lx) {
+    super(lx);
+    
+    addParameter(size);
+    addParameter(r1);
+    addParameter(g1);
+    addParameter(b1);
+    
+    startModulator(CircleMoveX);
+    startModulator(CircleMoveY);
+    startModulator(RateLfo);
+    addParameter("rate", this.rate);
+    addParameter(r2);
+    addParameter(g2);
+    addParameter(b2);
+    addParameter(r3);
+    addParameter(g3);
+    addParameter(b3);
+    
+    
+    plasmaGenerator =  new PlasmaGeneratorY(model.xMax, model.yMax, model.zMax);
+    UpdateCirclePosition();
+    
+    //PrintModelGeometory();
+}
+    
+  //main method
+  public void run(double deltaMs) {
+    for (Rail rail : venue.rails) {
+      //GET A UNIQUE SHADE FOR THIS PIXEL
+      //convert this point to vector so we can use the dist method in the plasma generator
+      float _size = size.getValuef(); 
+      for (LXPoint p : rail.points) {
+        //combine the individual plasma patterns 
+        LXVector pointAsVector = new LXVector(p);
+        shade = plasmaGenerator.GetThreeTierPlasma(p, _size, movement );
+        shade1 = plasmaGenerator.MineRotatingDiagonSlice(pointAsVector, _size, movement, slice1 );
+        shade2 = plasmaGenerator.MineRotatingDiagonSlice(pointAsVector, _size, movement, slice2 );
+        shade3 = plasmaGenerator.MineRotatingDiagonSlice(pointAsVector, _size, movement, slice3 );
+        
+        //separate out a red, green and blue shade from the plasma wave 
+        if (shade1 > 0.5) {
+          red = r1.getValuef();
+          green = g1.getValuef();
+          blue = b1.getValuef();
+        } else if (shade2 > 0.5){
+          red = r2.getValuef();
+          green = g2.getValuef();
+          blue = b2.getValuef();
+        }  else if(shade3 > 0.5) {
+          red = r3.getValuef();
+          green = g3.getValuef();
+          blue = b3.getValuef();
+        }
+        colors[p.index]= LXColor.rgba( (int) red,(int)green, (int)blue,254);
+      }
+    }
+    
+   movement =+ ((float)RateLfo.getValue() / 1000); //advance the animation through time. =+ notation means it takes the positive value so this will range from 0.002 to 0.020 over 45s 
+   UpdateCirclePosition();
+  }
+  
+  //method to update circle position
+  void UpdateCirclePosition()
+  {
+      plasmaGenerator.UpdateCirclePosition(
+      (float)CircleMoveX.getValue(), 
+      (float)CircleMoveY.getValue(),
+      0
+      );
+  }
+}
+
+@LXCategory("Color")
+public class PlasmaPlay extends EnvelopPattern {
+  
+  public String getAuthor() {
+    return "Fin McCarthy";
+  }
+  
+  //by Fin McCarthy
+  // finchronicity@gmail.com
+  
+  //variables
+  int brightness = 255;//set brightness to max
+  float red, green, blue;
+  float shade,shade1, shade2, shade3, shade4, shade5, shade6;
+  float movement = 0.1;
+  float slice1 =0;
+  float slice2 =250;
+  float slice3 =500;
+  float slice4 = 750;
+  float slice5 = 333;
+  float slice6 = 667;
+  
+  //variable calling the helper class
+  PlasmaGeneratorY plasmaGenerator;
+  
+  long framecount = 0;
+    
+    //adjust the size of the plasma
+    public final CompoundParameter size = new CompoundParameter("Size", 1.0, 0.1, 2.0)
+    .setDescription("Size");
+    
+    public final CompoundParameter r1 = new CompoundParameter("R1 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter g1 = new CompoundParameter("G1 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter b1 = new CompoundParameter("B1 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter rate = new CompoundParameter("Rate", 22000.0, 1000.0, 60000.0);
+    public final CompoundParameter depth = new CompoundParameter("depth", 1000.0, 1000.0, 32000.0);
+    public final CompoundParameter r2 = new CompoundParameter("R2 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter g2 = new CompoundParameter("G2 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter b2 = new CompoundParameter("B2 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter r3 = new CompoundParameter("R3 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter g3 = new CompoundParameter("G3 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter b3 = new CompoundParameter("B3 Bri", 255.0, 0.0, 255.0);
+    public final CompoundParameter shapeWindow = new CompoundParameter("shapeWindow", 1000.0, 10.0, 1000.0);
+    public final CompoundParameter offset1 = new CompoundParameter("Off1", 0.0, 0.0, 1000.0);
+    public final CompoundParameter offset2 = new CompoundParameter("Off2", 0.0, 0.0, 1000.0);
+    public final CompoundParameter offset3 = new CompoundParameter("Off3", 0.0, 0.0, 1000.0);
+    public final CompoundParameter diagon = new CompoundParameter("diagon", 1.0, -1.0, 1.0);
+    //public final CompoundParameter min = new CompoundParameter("Min", 2.0, 2.0, 20.0);
+   // public final CompoundParameter max = new CompoundParameter("Max", 20.0, 2.0, 20.0);*/
+    //variable speed of the plasma. 
+    public final SinLFO RateLfo = new SinLFO(
+      1, //start
+      new FunctionalParameter() {
+    public double getValue() {
+      return depth.getValue();
+      }
+    }  , //stop
+       new FunctionalParameter() {
+    public double getValue() {
+      return rate.getValue();
+    }
+  });
+  
+    //moves the circle object around in space
+    public final SinLFO CircleMoveX = new SinLFO(
+      model.xMax*-1, 
+      model.xMax*2, 
+      22000//40000     
+    );
+    
+      public final SinLFO CircleMoveY = new SinLFO(
+      model.zMax*-1, 
+      model.zMax*2, 
+      22000 
+    );
+
+  private final LXUtils.LookupTable.Sin sinTable = new LXUtils.LookupTable.Sin(255);
+  private final LXUtils.LookupTable.Cos cosTable = new LXUtils.LookupTable.Cos(255);
+  
+  
+  //constructor
+  public PlasmaPlay(LX lx) {
+    super(lx);
+    
+    addParameter(size);
+    addParameter(r1);
+    addParameter(g1);
+    addParameter(b1);
+    
+    startModulator(CircleMoveX);
+    startModulator(CircleMoveY);
+    startModulator(RateLfo);
+    addParameter("rate", this.rate);
+    addParameter(r2);
+    addParameter(g2);
+    addParameter(b2);
+    addParameter(r3);
+    addParameter(g3);
+    addParameter(b3);
+    addParameter(shapeWindow);
+    addParameter(depth);
+    addParameter(diagon);
+    addParameter(offset1);
+    addParameter(offset2);
+    addParameter(offset3);
+    
+    
+    plasmaGenerator =  new PlasmaGeneratorY(model.xMax, model.yMax, model.zMax);
+    UpdateCirclePosition();
+    
+    //PrintModelGeometory();
+}
+    
+  //main method
+  public void run(double deltaMs) {
+    for (Rail rail : venue.rails) {
+      //GET A UNIQUE SHADE FOR THIS PIXEL
+      
+      //convert this point to vector so we can use the dist method in the plasma generator
+      float _size = size.getValuef(); 
+      for (LXPoint p : rail.points) {
+        //combine the individual plasma patterns 
+        LXVector pointAsVector = new LXVector(p);
+        shade1 = plasmaGenerator.SinTrim(pointAsVector, _size, movement, offset1.getValuef(), shapeWindow.getValuef() );
+        shade2 = plasmaGenerator.SinTrim(pointAsVector, _size, movement, offset2.getValuef(), shapeWindow.getValuef() );
+        shade3 = plasmaGenerator.SinTrim(pointAsVector, _size, movement, offset3.getValuef(), shapeWindow.getValuef() );
+        //separate out a red, green and blue shade from the plasma wave 
+        red = min(255,shade1*(r1.getValuef()/255) + shade2*(r2.getValuef()/255) + shade3*(r3.getValuef()/255));
+        green = min(255,shade1 *(g1.getValuef()/255) + shade2*(g2.getValuef()/255) + shade3*(g3.getValuef()/255));
+        blue = min(255,shade1 *(b1.getValuef()/255) + shade2*(b2.getValuef()/255) + shade3*(b3.getValuef()/255));
+        colors[p.index]= LXColor.rgba( (int) red,(int)green, (int)blue,254);
+      }
+      //++cntRail;
+    }
+    
+   movement =+ (float)RateLfo.getValue(); //advance the animation through time. =+ notation means it takes the positive value so this will range from 0.002 to 0.020 over 45s 
+   UpdateCirclePosition();
+  }
+  
+  //method to update circle position
+  void UpdateCirclePosition()
+  {
+      plasmaGenerator.UpdateCirclePosition(
+      (float)CircleMoveX.getValue(), 
+      (float)CircleMoveY.getValue(),
+      0
+      );
+  }
+
+
+}
+// This is a helper class to generate plasma. 
+
+public static class PlasmaGeneratorY {
+      
+    //NOTE: Geometry is FULL scale for this model. Dont use normalized values. 
+      
+      float xmax, ymax, zmax;
+      LXVector circle; 
+      
+      //sets up table of 255 points that represent a sin wave in radians
+      static final LXUtils.LookupTable.Sin sinTable = new LXUtils.LookupTable.Sin(255);
+      static final LXUtils.LookupTable.Cos cosTable = new LXUtils.LookupTable.Cos(255);
+      
+      //methods
+      float SinVertical(LXVector p, float size, float movement)
+      {
+        return sinTable.sin(   ( p.x / xmax / size) + (movement / 100 ));
+      }
+      
+      float SinHorizontal(LXVector p, float size, float movement)
+      {
+        return sin(   ( map(p.y / (ymax),0,1,-1,1)/ size) + (movement / 100 ));
+      }
+      
+      float MineRotating(LXVector p, float size, float movement)
+      {
+       
+        return sinTable.sin( PI*((p.y / ymax / size) )+((map(movement,.002,.020,-12*PI, 12*PI))));//* (sin(map(movement,.002,.020,0,2*PI)  )))) ;
+      }
+       float MineRotatingPI(LXVector p, float size, float movement)
+      {
+       
+        return sinTable.sin(PI+(PI*((p.y / ymax / size) )+((map(movement,.002,.020,-12*PI, 12*PI)))));//* (sin(map(movement,.002,.020,0,2*PI)  )))) ;
+      }
+      float MineRotatingDiagon(LXVector p, float size, float movement)
+      {
+       
+        return sinTable.sin(map(p.x/xmax/size,-1,1,-PI,PI)+(PI*((p.y / ymax / size) )+((map(movement,.002,.020,-12*PI, 12*PI)))));//* (sin(map(movement,.002,.020,0,2*PI)  )))) ;
+      }
+       float MineRotatingDiagonSlice(LXVector p, float size, float movement,float offset)
+      {
+       
+        return sinTable.sin(offset+(map(p.x/xmax/size,-1,1,-PI,PI)+(PI*((p.y / ymax / size) )+((map(movement,.002,.020,-12*PI, 12*PI))))));//* (sin(map(movement,.002,.020,0,2*PI)  )))) ;
+      }
+      
+      float MineRotatingDiagonSliceSin(LXVector p, float size, float movement,float offset)
+      {
+        
+        float pStretched = map(p.x / xmax,-1,1,0, xmax * 2); // normalized coordinates
+        float oneCycle = xmax * 2  * size; //size of a single cycle
+        
+        
+          if((pStretched > oneCycle) || (pStretched > offset)){
+            oneCycle = 0;
+            System.out.println("pStretched: " + pStretched + " oneCycle: " +oneCycle+ "va " +map(oneCycle/size,0, xmax * 2,-1,1));
+          } else {
+            oneCycle = pStretched + offset;
+          }
+          
+        //System.out.println("pStretched: " + pStretched + " oneCycle: " +oneCycle);
+        
+        float theCycle = map(oneCycle/size,0, xmax * 2,-PI,PI);
+        return cosTable.cos(theCycle) ;//* (sin(map(movement,.002,.020,0,2*PI)  )))) ;
+      }
+      
+      float SinTrim(LXVector p, float size, float movement,float offset,float shapeWindow)
+      {
+        float posVal = map(p.x/xmax/size,-1,1,1, 1000);
+        //float shapeWindow = 750;
+        float finalVal = 0;
+        float shape = 0;
+        float animStart = (posVal + movement +offset) % 1000; //start of the animation
+        
+        if ( animStart <= shapeWindow){
+          shape = cosTable.cos(map(shapeWindow - animStart, 0, shapeWindow, -PI, PI));
+          finalVal = map(shape,-1,1,0,255);
+          
+        } else {
+          finalVal= 0;
+        }
+        
+        return finalVal ;
+      }
+      
+      float SinTrimY(LXVector p, float size, float movement,float offset,float shapeWindow, float diagon)
+      {
+        float xDist = p.x/xmax/size;
+        float yDist = p.y/ymax/size;
+        float posVal = map(yDist,0,1,1, 1000);
+        float xVal = map(xDist,-1,1,1,1000);
+        float finalVal = 0;
+        float shape = 0;
+        float diagonAdjust = xVal * diagon;
+        float animStart = (posVal + movement +offset + diagonAdjust) % 1000; //start of the animation
+        
+        if ( animStart <= shapeWindow){
+          shape = cosTable.cos(map ((shapeWindow - animStart), 0, shapeWindow, -PI, PI));
+          finalVal = map(shape,-1,1,0,255);
+          
+        } else {
+          finalVal= 0;
+        }
+        
+        return finalVal ;
+      }
+       float SinRotating(LXVector p, float size, float movement)
+      {
+        
+        return sinTable.sin( ( ( p.z / zmax / size) * sin( movement /66 )) + (p.y / ymax / size) * (cos(movement / 100))  ) ;
+      } 
+      float SinCircle(LXVector p, float size, float movement)
+      {
+        float distance =  p.dist(circle);
+        return sinTable.sin( (( distance + movement + (p.y/ymax) ) / xmax / size) * 2 ); 
+      }
+    
+      float GetThreeTierPlasma(LXPoint p, float size, float movement)
+      {
+        LXVector pointAsVector = new LXVector(p);
+        return  SinVertical(  pointAsVector, size, movement) +
+        SinRotating(  pointAsVector, size, movement) +
+        SinCircle( pointAsVector, size, movement);
+      }
+      
+      //contructor
+      public PlasmaGeneratorY(float _xmax, float _ymax, float _zmax)
+      {
+        xmax = _xmax;
+        ymax = _ymax;
+        zmax = _zmax;
+        circle = new LXVector(0,0,0);
+      }
+      
+      //main method
+      void UpdateCirclePosition(float x, float y, float z)
+      {
+        circle.x = x;
+        circle.y = y;
+        circle.z = z;
+      }
+    
+}//end plasma generator
+
+@LXCategory("Color")
+public class ColorSwirl extends EnvelopPattern {
+  public String getAuthor() {
+    return "Mark C. Slee";
+  }
+    
+  private float basis = 0;
+  
+  public final CompoundParameter speed =
+    new CompoundParameter("Speed", .5, 0, 2);
+      
+  public final CompoundParameter slope = 
+    new CompoundParameter("Slope", 1, .2, 3);    
+    
+  public final DiscreteParameter amount =
+    new DiscreteParameter("Amount", 3, 1, 5)
+    .setDescription("Amount of swirling around the center");    
+  
+  public ColorSwirl(LX lx) {
+    super(lx);
+    addParameter("speed", this.speed);
+    addParameter("slope", this.slope);
+    addParameter("amount", this.amount);
+  }
+  
+  public void run(double deltaMs) {
+    this.basis = (float) (this.basis + .001 * speed.getValuef() * deltaMs) % TWO_PI;
+    float slope = this.slope.getValuef();
+    float sat = palette.getSaturationf();
+    int amount = this.amount.getValuei();
+    for (LXPoint p : model.points) {
+      float hb1 = (this.basis + p.azimuth - slope * (1 - p.yn)) / TWO_PI;
+      colors[p.index]= LXColor.hsb(
+        hb1 * 360 * amount,
+        sat,
+        100
+      );
+    }
   }
 }

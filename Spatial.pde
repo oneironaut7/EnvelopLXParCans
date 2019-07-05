@@ -137,6 +137,7 @@ public class EnvelopObjects extends EnvelopPattern implements CustomDeviceUI {
     new UIKnob(0, 116).setParameter(this.size).addToContainer(device);
     new UIKnob(knobSpacing, 116).setParameter(this.response).addToContainer(device);
     new UIKnob(2*knobSpacing, 116).setParameter(this.spread).addToContainer(device);
+    //new UIItemList.BasicList(ui,0,0,100,100).addToContainer(device);
 
     device.setContentWidth(3*knobSpacing - 4);
   }
