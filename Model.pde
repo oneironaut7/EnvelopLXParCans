@@ -172,7 +172,7 @@ static class Satellite extends EnvelopModel {
     new PVector( 0, 0,  101)
   };
   final static PVector[] PARCAN_POSITIONS = {
-    new PVector( 50, 0,  101)
+    new PVector( 0, 0,  101)
   };
   /*
   final static PVector[] COLUMN_POSITIONS;
@@ -380,8 +380,14 @@ static class Satellite extends EnvelopModel {
      };
   
   final static EnvelopModel.Config.Par[] PARS = {
-    new EnvelopModel.Config.Par(new PVector(5, 0, 0), 1, POINT_SPACING),
-    new EnvelopModel.Config.Par(new PVector(-5, 0, 0), 1, POINT_SPACING)
+    new EnvelopModel.Config.Par(new PVector(8, 0, 0), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(0, 0, -8), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(-8, 0, 0), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(0, 0, 8), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(18, 0, 18), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(18, 0, -18), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(-18, 0, -18), 1, POINT_SPACING),
+    new EnvelopModel.Config.Par(new PVector(-18, 0, 18), 1, POINT_SPACING)
   };
   final static float[] ARC_POSITIONS = { };
   

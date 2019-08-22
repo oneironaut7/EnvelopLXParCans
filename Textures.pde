@@ -277,3 +277,19 @@ public class Jitters extends LXModelPattern<EnvelopModel> {
     }
   }
 }
+
+@LXCategory("Texture")
+public class Solid extends LXPattern {
+  
+  public Solid(LX lx) {
+    super(lx);
+  }
+  
+  public void run(double deltaMs) {
+    int i = 0;
+    for (LXPoint p : venue.points) {
+        colors[p.index] = LXColor.WHITE;
+        ++i;
+      }
+  }
+}

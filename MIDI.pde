@@ -704,34 +704,42 @@ public class ADSR {
   public class ParNotes extends EnvelopPattern {
 
   //declaration of array to hold all pars
-  int numPars = 2;
+  int numPars = model.pars.size();
+  
+  //parameter
+  public final DiscreteParameter offset = new DiscreteParameter("Offset", 5, 0, 20);
+  
+  int offsetVal = 4; 
+    
   private final ParLayer[] pars = new ParLayer[numPars]; 
-
+  
   //contructor
   public ParNotes(LX lx) {
     super(lx);
+    addParameter(offset);
     int c = 0; // count value
 
     for (Par par : model.pars) {
       addLayer(pars[c] = new ParLayer(lx, par));
-      addParameter("attack-" + c, pars[c].attack);
-      addParameter("decay-" + c, pars[c].decay);
+      addParameter("att-" + c, pars[c].attack);
+      addParameter("dec-" + c, pars[c].decay);
       ++c; //inc count value
     }
   }
 
   @Override
     public void noteOnReceived(MidiNoteOn note) {
-    int channel = note.getChannel();
-    if (channel < this.pars.length) {
+    int channel = note.getChannel() - (int)offset.getValue() + 1;
+    System.out.println(channel);
+    if (channel < this.pars.length && channel >= 0) {
       this.pars[channel].envelope.engage.setValue(true);
     }
   }
 
   @Override
     public void noteOffReceived(MidiNote note) {
-    int channel = note.getChannel();
-    if (channel < this.pars.length) {
+    int channel = note.getChannel() - (int)offset.getValue() + 1;
+    if (channel < this.pars.length && channel >= 0) {
       this.pars[channel].envelope.engage.setValue(false);
     }
   }
@@ -770,7 +778,8 @@ public class ADSR {
     }
 
     public void run(double deltaMs) {
-      float level = this.vibrato.getValuef() * this.envelope.getValuef();
+      //float level = this.vibrato.getValuef() * this.envelope.getValuef(); delete vibrato
+      float level = 1.0 * this.envelope.getValuef();
       for (LXPoint p : par.points) {
         colors[p.index] = LXColor.gray(level);
       }

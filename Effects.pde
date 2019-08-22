@@ -156,6 +156,199 @@ public class LSD extends LXEffect {
   }
 }
 
+@LXCategory("Color")
+public class HSB extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0, 360);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100, 0, 100);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100, 0., 100);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public HSB(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      colors[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+    }
+  }
+}
+
+@LXCategory("Blend")
+public class LERP extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  public final CompoundParameter blend = new CompoundParameter("Blend", 1., 0., 1.);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public LERP(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+    addParameter(blend);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], blend.getValuef()));
+    }
+  }
+}
+
+@LXCategory("Blend")
+public class Lightest extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public Lightest(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      colors[p.index] = min(360,LXColor.lightest(buffer[p.index], colors[p.index]));
+    }
+  }
+}
+
+@LXCategory("Blend")
+public class Darkest extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public Darkest(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      colors[p.index] = min(360,LXColor.darkest(buffer[p.index], colors[p.index]));
+    }
+  }
+}
+
+@LXCategory("Blend")
+public class Screen extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  public final CompoundParameter blend = new CompoundParameter("Blend", 1., 0., 1.);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public Screen(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+    addParameter(blend);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      colors[p.index] = min(360,LXColor.screen(buffer[p.index], colors[p.index]));
+    }
+  }
+}
+
+@LXCategory("Blend")
+public class Subtract extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public Subtract(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      colors[p.index] = min(360,LXColor.subtract(buffer[p.index], colors[p.index]));
+    }
+  }
+}
+
+@LXCategory("Blend")
+public class Multiply extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public Multiply(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    for (LXPoint p :  model.points) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      colors[p.index] = min(360,LXColor.multiply(buffer[p.index], colors[p.index]));
+    }
+  }
+}
+
+@LXCategory("Sub Group")
 public class ParCansOff extends LXEffect {
   public ParCansOff(LX lx) {
     super(lx);
@@ -171,6 +364,7 @@ public class ParCansOff extends LXEffect {
   }
 }
 
+@LXCategory("Sub Group")
 public class SubGroupRingsOff extends LXEffect {
   
   final BooleanParameter ring1 = new BooleanParameter("Ring1");
@@ -235,3 +429,35 @@ public class SubGroupRingsOff extends LXEffect {
     }  
   }
 }
+/*
+@LXCategory("Texture")
+public class Kaleidescope extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0., 360.);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100., 0., 100.);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100., 0., 100);
+  public final DiscreteParameter div = new DiscreteParameter("Div", 1, 1, 4);
+  
+  //buffer???
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public Kaleidescope(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+    addParameter(div);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int mode = div.getValuei();
+    for (LXPoint p :  model.rails) {
+      buffer[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      if(p.x < 0 && mode == 1) {
+        colors[p.index] = buffer[p.index];
+      }
+    }
+  }
+}*/

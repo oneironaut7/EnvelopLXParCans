@@ -60,7 +60,7 @@ public class ParSelect extends EnvelopPattern {
   }
  
   public final DiscreteParameter par_num = 
-    new DiscreteParameter("Par",1,1,3);
+    new DiscreteParameter("Par",1,1,9);
     
   public ParSelect(LX lx) {
     super(lx);

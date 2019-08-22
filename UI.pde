@@ -7,9 +7,21 @@ UI3dComponent getUIVenue() {
 
 abstract class UIVenue extends UI3dComponent {
 
-  final static float BOOTH_SIZE_X = 6*FEET;
+  final static float BOOTH_SIZE_X = 10*FEET;
   final static float BOOTH_SIZE_Y = 40*INCHES;
   final static float BOOTH_SIZE_Z = 36*INCHES;
+  
+  final static float FLOOR_SIZE_X = 80*FEET;
+  final static float FLOOR_SIZE_Y = 2*INCHES;
+  final static float FLOOR_SIZE_Z = 80*FEET;
+  
+  final static float DOOR_SIZE_X = 5*FEET;
+  final static float DOOR_SIZE_Y = 10*FEET;
+  final static float DOOR_SIZE_Z = 8*INCHES;
+  
+  final static float STAGE_SIZE_X = 9*FEET;
+  final static float STAGE_SIZE_Y = 4*FEET;
+  final static float STAGE_SIZE_Z = 9*FEET;
 
   final static float LOGO_SIZE = 100*INCHES;
   final PImage LOGO = loadImage("envelop-logo-clear.png");
@@ -64,24 +76,30 @@ abstract class UIVenue extends UI3dComponent {
 
 class UISatellite extends UIVenue {
   public void drawFloor(UI ui, PGraphics pg) {
+     //floor
+    pg.translate(0, -4*INCHES, 0);
+    pg.box(FLOOR_SIZE_X, FLOOR_SIZE_Y, FLOOR_SIZE_Z);
+    pg.translate(0, 0, 0);
     
     // Desk
-    //pg.translate(0, BOOTH_SIZE_Y/2, Satellite.INCIRCLE_RADIUS + BOOTH_SIZE_Z/2);
-    //pg.box(BOOTH_SIZE_X, BOOTH_SIZE_Y, BOOTH_SIZE_Z);
-    //pg.translate(0, -BOOTH_SIZE_Y/2, -Satellite.INCIRCLE_RADIUS - BOOTH_SIZE_Z/2);
-    /*
-    pg.beginShape();
-    for (PVector v : Satellite.COLUMN_POSITIONS) {
-      pg.vertex(v.x, 0, v.y);
-    }
-    pg.endShape(CLOSE);
-    pg.beginShape(QUAD_STRIP);
-    for (int vi = 0; vi <= Satellite.COLUMN_POSITIONS.length; ++vi) {
-      PVector v = Satellite.COLUMN_POSITIONS[vi % Satellite.COLUMN_POSITIONS.length];
-      pg.vertex(v.x, 0, v.y);
-      pg.vertex(v.x, -8*INCHES, v.y);
-    }
-    pg.endShape();*/
+    pg.translate(-33*FEET, 25*INCHES, 33*FEET);
+    pg.rotateY(-QUARTER_PI);
+    pg.box(BOOTH_SIZE_X, BOOTH_SIZE_Y, BOOTH_SIZE_Z);
+    pg.rotateY(QUARTER_PI);
+    pg.translate(33*FEET, -25*INCHES, -33*FEET);
+    
+    // Door
+    pg.translate(-40*FEET, 5.2*FEET, -35*FEET);
+    pg.rotateY(-HALF_PI);
+    pg.box(DOOR_SIZE_X, DOOR_SIZE_Y, DOOR_SIZE_Z);
+    pg.rotateY(HALF_PI);
+    pg.translate(40*FEET, -5.2*FEET, 35*FEET);
+    
+    // Stage
+    pg.translate(0, STAGE_SIZE_Y/2 + (2*INCHES), 0);
+    pg.box(STAGE_SIZE_X, STAGE_SIZE_Y, STAGE_SIZE_Z);
+    pg.translate(0, -STAGE_SIZE_Y/2 + (2*INCHES), 0);
+    
   }
 }
   

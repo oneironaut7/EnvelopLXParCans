@@ -1,4 +1,4 @@
-/**
+ /**
  * EnvelopLX
  *
  * An interactive, sound-reactive lighting control system for the
@@ -75,9 +75,9 @@ public void onUIReady(LXStudio lx, LXStudio.UI ui) {
   ui.leftPane.audio.setVisible(false);
   ui.preview.addComponent(getUIVenue());
   ui.preview.addComponent(new UISoundObjects());
-  ui.preview.setPhi(PI/32).setMinRadius(2*FEET).setMaxRadius(48*FEET);
-  new UIEnvelopSource(ui, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global, 2);
-  new UIEnvelopDecode(ui, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global, 3);
+  ui.preview.setPhi(PI/32).setMinRadius(2*FEET).setMaxRadius(56*FEET);
+  //new UIEnvelopSource(ui, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global, 2);
+  //new UIEnvelopDecode(ui, ui.leftPane.global.getContentWidth()).addToContainer(ui.leftPane.global, 3);
 }
 
 void draw() {

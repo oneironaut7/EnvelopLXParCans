@@ -123,8 +123,8 @@ public static class PitchRollYaw extends LXPattern {
   
   //fields or variables 
   private LXProjection proj = new LXProjection(model);
-  final CompoundParameter pRot = new CompoundParameter("Pitch", 0, -PI, PI);
-  final CompoundParameter rRot = new CompoundParameter("Roll", 0, -PI, PI);
+  final CompoundParameter pRot = new CompoundParameter("Pitch", 0, -TWO_PI, TWO_PI);
+  final CompoundParameter rRot = new CompoundParameter("Roll", 0, -TWO_PI, TWO_PI);
   final CompoundParameter yRot = new CompoundParameter("Yaw", 0, 0, TWO_PI);
   final CompoundParameter yOffset  = new CompoundParameter("Y off", 0, -3* model.yMax, 3* model.yMax);
   final CompoundParameter intensity = new CompoundParameter("Int", 100, 0, 100);
@@ -2908,5 +2908,120 @@ public class TubeSequence extends EnvelopPattern {
         
         }
     }  
+  }
+}
+
+@LXCategory("Pattern")
+public class Ellipsoid extends EnvelopPattern {
+  
+  public String getAuthor() {
+    return "Fin McCarthy";
+  }
+  
+  //by Fin McCarthy
+  // finchronicity@gmail.com
+  
+  //variables
+  int brightness = 255;//set brightness to max
+  float red, green, blue;
+  float shade,shade1, shade2, shade3, shade4, shade5, shade6;
+  float movement = 0.1;
+  float slice1 =0;
+  float slice2 =250;
+  float slice3 =500;
+  float slice4 = 750;
+  float slice5 = 333;
+  float slice6 = 667;
+  
+  
+  //variable calling the helper class
+  PlasmaGeneratorY plasmaGenerator;
+  
+  long framecount = 0;
+    
+    //adjust the size of the plasma
+    public final CompoundParameter size = new CompoundParameter("Size", 5.0, 2.0, 30.0)
+    .setDescription("Size");
+    public final CompoundParameter rate = new CompoundParameter("Rate", 22000.0, 1000.0, 60000.0);
+    public final CompoundParameter depth = new CompoundParameter("Depth", 1000.0, 1000.0, 32000.0);
+    public final CompoundParameter offset1 = new CompoundParameter("Move", 0.0, 0.0, 1000.0);
+    public final BooleanParameter animateSwitch = new BooleanParameter("animateSwitch", true);
+    //variable speed of the plasma. 
+    public final SinLFO RateLfo = new SinLFO(
+      1, //start
+      new FunctionalParameter() {
+    public double getValue() {
+      return depth.getValue();
+      }
+    }  , //stop
+       new FunctionalParameter() {
+    public double getValue() {
+      return rate.getValue();
+    }
+  });
+  
+    //moves the circle object around in space
+    public final SinLFO CircleMoveX = new SinLFO(
+      model.xMax*-1, 
+      model.xMax*2, 
+      22000//40000     
+    );
+    
+      public final SinLFO CircleMoveY = new SinLFO(
+      model.zMax*-1, 
+      model.zMax*2, 
+      22000 
+    );
+  
+  
+  //constructor
+  public Ellipsoid(LX lx) {
+    super(lx);
+    
+    //modulators
+    startModulator(CircleMoveX);
+    startModulator(CircleMoveY);
+    startModulator(RateLfo);
+    
+    //parameters
+    addParameter(size);
+    addParameter(rate);
+    addParameter(depth);
+    addParameter(offset1);
+    addParameter(animateSwitch);
+    
+    
+    plasmaGenerator =  new PlasmaGeneratorY(model.xMax, model.yMax, model.zMax);
+    UpdateCirclePosition();
+}
+    
+  //main method
+  public void run(double deltaMs) {
+    for (Rail rail : venue.rails) {
+      //GET A UNIQUE SHADE FOR THIS PIXEL
+      
+      //convert this point to vector so we can use the dist method in the plasma generator
+      float _size = size.getValuef(); 
+      for (LXPoint p : rail.points) {
+        //combine the individual plasma patterns 
+        LXVector pointAsVector = new LXVector(p);
+        shade1 = plasmaGenerator.SinEllipsoid(pointAsVector, _size, movement, offset1.getValuef(), animateSwitch.getValueb() );
+        
+        colors[p.index]= LXColor.rgba( (int)shade1,(int)shade1, (int)shade1, 255);
+      }
+    }
+    
+   movement =+ (float)RateLfo.getValue(); //advance the animation through time. =+ notation means it takes the positive value so this will range from 0.002 to 0.020 over 45s 
+   UpdateCirclePosition();
+  }
+  
+  //method to update circle position
+  void UpdateCirclePosition()
+  {
+      plasmaGenerator.UpdateCirclePosition(
+      (float)CircleMoveX.getValue(), 
+      (float)CircleMoveY.getValue(),
+      0
+      );
   }
 }
