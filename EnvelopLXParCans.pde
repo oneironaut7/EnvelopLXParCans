@@ -10,6 +10,13 @@
  * Copyright 2017- Mark C. Slee
  */
 
+
+// Angle for rotation
+float a = 0;
+
+// We'll use a lookup table so that we don't have to repeat the math over and over
+float[] depthLookUp = new float[2048];
+
 enum Environment {
   SATELLITE
 }

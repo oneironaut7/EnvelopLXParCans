@@ -142,6 +142,8 @@ static class Satellite extends EnvelopModel {
   final static float INCIRCLE_RADIUS = HALF_EDGE_LENGTH + EDGE_LENGTH / sqrt(2);
   final static int TUBE_LENGTH = 32;
   final static float dtr = (2*PI)/360; //degrees to radians
+  final static float POINT_SPACING = 1.31233596*INCHES;
+  
   // outer perimeter design
   final static float radius = 3 ;
   final static float numtubes= 16; //number of tubes
@@ -161,12 +163,30 @@ static class Satellite extends EnvelopModel {
   final static float radius3 = 19.1 ;
   final static float numtubes3= 20; //number of tubes
   final static float ratio3= (360/numtubes3) * dtr;
-  
+ 
   //8 Kamishees
   //circle 3
   final static float radius4 = 19.1 ;
   final static float numtubes4= 8; //number of tubes
   final static float ratio4= (360/numtubes4) * dtr;
+  
+  //Platform
+  final static float radius5 = 5.0 ;
+  final static float numtubes5= 32; //number of tubes
+  final static float ratio5= (360/numtubes5) * dtr;
+  final static float pos1= POINT_SPACING * 1; //denotes y axis spacing for platform levels
+  final static float pos2= POINT_SPACING * 2;
+  final static float pos3= POINT_SPACING * 3;
+  final static float pos4= POINT_SPACING * 4;
+  final static float pos5= POINT_SPACING * 5;
+  
+  final static float factor4= 0.2;
+  final static float factor1= 0.6;
+  final static float factor2= 1.0;
+  final static float factor3= 1.4;
+  
+  
+  
   
   final static PVector[] COLUMN_POSITIONS = {
     new PVector( 0, 0,  101)
@@ -184,7 +204,7 @@ static class Satellite extends EnvelopModel {
     }
   };*/
   
-  final static float POINT_SPACING = 1.31233596*INCHES;
+  
   
   final static EnvelopModel.Config.Rail[] RAILS = {
    /* new EnvelopModel.Config.Rail(new PVector(0, 0, 0), TUBE_LENGTH, POINT_SPACING),
@@ -375,7 +395,106 @@ static class Satellite extends EnvelopModel {
     new EnvelopModel.Config.Rail(new PVector(radius2* sin(5*ratio2 + offset2), 0, radius2* cos(5*ratio2 + offset2)), TUBE_LENGTH, POINT_SPACING),
     new EnvelopModel.Config.Rail(new PVector(radius1* sin(3*ratio1), 0, radius1* cos(3*ratio1)), TUBE_LENGTH, POINT_SPACING),
     new EnvelopModel.Config.Rail(new PVector(radius1* sin(4*ratio1), 0, radius1* cos(4*ratio1)), TUBE_LENGTH, POINT_SPACING),
-    new EnvelopModel.Config.Rail(new PVector(radius1* sin(5*ratio1), 0, radius1* cos(5*ratio1)), TUBE_LENGTH, POINT_SPACING)
+    new EnvelopModel.Config.Rail(new PVector(radius1* sin(5*ratio1), 0, radius1* cos(5*ratio1)), TUBE_LENGTH, POINT_SPACING),
+    
+    //Platform for now; super annoying but might be best to individually list each pixel as a rail to avoid weird issues
+    // with direction of strip
+    //1
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((3-factor3)*ratio5), pos2, radius5* cos((3-factor3)*ratio5)), 1, POINT_SPACING),//pix1
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((3-factor3)*ratio5), pos3, radius5* cos((3-factor3)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((3-factor3)*ratio5), pos4, radius5* cos((3-factor3)*ratio5)), 1, POINT_SPACING),//pix3
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((2-factor2)*ratio5), pos5, radius5* cos((2-factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((1-factor1)*ratio5), pos5, radius5* cos((1-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((0-factor4)*ratio5), pos5, radius5* cos((0-factor4)*ratio5)), 1, POINT_SPACING),//pix6
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((31+factor4)*ratio5), pos5, radius5* cos((31+factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((30+factor1)*ratio5), pos5, radius5* cos((30+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((29+factor2)*ratio5), pos5, radius5* cos((29+factor2)*ratio5)), 1, POINT_SPACING),//pix9
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((28+factor3)*ratio5), pos4, radius5* cos((28+factor3)*ratio5)), 1, POINT_SPACING),//pix10
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((28+factor3)*ratio5), pos3, radius5* cos((28+factor3)*ratio5)), 1, POINT_SPACING),//pix11
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((28+factor3)*ratio5), pos2, radius5* cos((28+factor3)*ratio5)), 1, POINT_SPACING),//pix12
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((29+factor2)*ratio5), pos1, radius5* cos((29+factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((30+factor1)*ratio5), pos1, radius5* cos((30+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((31+factor4)*ratio5), pos1, radius5* cos((31+factor4)*ratio5)), 1, POINT_SPACING),//pix15
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((0-factor4)*ratio5), pos1, radius5* cos((0-factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((1-factor1)*ratio5), pos1, radius5* cos((1-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((2-factor2)*ratio5), pos1, radius5* cos((2-factor2)*ratio5)), 1, POINT_SPACING),//pix18
+    
+    //2
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((5+factor2)*ratio5), pos1, radius5* cos((5+factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((6+factor1)*ratio5), pos1, radius5* cos((6+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((7+factor4)*ratio5), pos1, radius5* cos((7+factor4)*ratio5)), 1, POINT_SPACING),//pix21
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((8-factor4)*ratio5), pos1, radius5* cos((8-factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((9-factor1)*ratio5), pos1, radius5* cos((9-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((10-factor2)*ratio5), pos1, radius5* cos((10-factor2)*ratio5)), 1, POINT_SPACING),//pix24
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((11-factor3)*ratio5), pos2, radius5* cos((11-factor3)*ratio5)), 1, POINT_SPACING),//pix25
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((11-factor3)*ratio5), pos3, radius5* cos((11-factor3)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((11-factor3)*ratio5), pos4, radius5* cos((11-factor3)*ratio5)), 1, POINT_SPACING),//pix27
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((10-factor2)*ratio5), pos5, radius5* cos((10-factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((9-factor1)*ratio5), pos5, radius5* cos((9-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((8-factor4)*ratio5), pos5, radius5* cos((8-factor4)*ratio5)), 1, POINT_SPACING),//pix30
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((7+factor4)*ratio5), pos5, radius5* cos((7+factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((6+factor1)*ratio5), pos5, radius5* cos((6+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((5+factor2)*ratio5), pos5, radius5* cos((5+factor2)*ratio5)), 1, POINT_SPACING),//pix33
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((4+factor3)*ratio5), pos4, radius5* cos((4+factor3)*ratio5)), 1, POINT_SPACING),//pix34
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((4+factor3)*ratio5), pos3, radius5* cos((4+factor3)*ratio5)), 1, POINT_SPACING),//pix35
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((4+factor3)*ratio5), pos2, radius5* cos((4+factor3)*ratio5)), 1, POINT_SPACING),//pix36
+    
+    //3
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((21+factor2)*ratio5), pos1, radius5* cos((21+factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((22+factor1)*ratio5), pos1, radius5* cos((22+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((23+factor4)*ratio5), pos1, radius5* cos((23+factor4)*ratio5)), 1, POINT_SPACING),//pix57
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((24-factor4)*ratio5), pos1, radius5* cos((24-factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((25-factor1)*ratio5), pos1, radius5* cos((25-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((26-factor2)*ratio5), pos1, radius5* cos((26-factor2)*ratio5)), 1, POINT_SPACING),//pix60
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((27-factor3)*ratio5), pos2, radius5* cos((27-factor3)*ratio5)), 1, POINT_SPACING),//pix61
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((27-factor3)*ratio5), pos3, radius5* cos((27-factor3)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((27-factor3)*ratio5), pos4, radius5* cos((27-factor3)*ratio5)), 1, POINT_SPACING),//pix63
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((26-factor2)*ratio5), pos5, radius5* cos((26-factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((25-factor1)*ratio5), pos5, radius5* cos((25-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((24-factor4)*ratio5), pos5, radius5* cos((24-factor4)*ratio5)), 1, POINT_SPACING),//pix66
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((23+factor4)*ratio5), pos5, radius5* cos((23+factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((22+factor1)*ratio5), pos5, radius5* cos((22+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((21+factor2)*ratio5), pos5, radius5* cos((21+factor2)*ratio5)), 1, POINT_SPACING),//pix69
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((20+factor3)*ratio5), pos4, radius5* cos((20+factor3)*ratio5)), 1, POINT_SPACING),//pix70
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((20+factor3)*ratio5), pos3, radius5* cos((20+factor3)*ratio5)), 1, POINT_SPACING),//pix71
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((20+factor3)*ratio5), pos2, radius5* cos((20+factor3)*ratio5)), 1, POINT_SPACING),//pix72
+    
+    //4
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((19-factor3)*ratio5), pos2, radius5* cos((19-factor3)*ratio5)), 1, POINT_SPACING),//pix37
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((19-factor3)*ratio5), pos3, radius5* cos((19-factor3)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((19-factor3)*ratio5), pos4, radius5* cos((19-factor3)*ratio5)), 1, POINT_SPACING),//pix39
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((18-factor2)*ratio5), pos5, radius5* cos((18-factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((17-factor1)*ratio5), pos5, radius5* cos((17-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((16-factor4)*ratio5), pos5, radius5* cos((16-factor4)*ratio5)), 1, POINT_SPACING),//pix42
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((15+factor4)*ratio5), pos5, radius5* cos((15+factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((14+factor1)*ratio5), pos5, radius5* cos((14+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((13+factor2)*ratio5), pos5, radius5* cos((13+factor2)*ratio5)), 1, POINT_SPACING),//pix45
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((12+factor3)*ratio5), pos4, radius5* cos((12+factor3)*ratio5)), 1, POINT_SPACING),//pix46
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((12+factor3)*ratio5), pos3, radius5* cos((12+factor3)*ratio5)), 1, POINT_SPACING),//pix47
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((12+factor3)*ratio5), pos2, radius5* cos((12+factor3)*ratio5)), 1, POINT_SPACING),//pix48
+    
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((13+factor2)*ratio5), pos1, radius5* cos((13+factor2)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((14+factor1)*ratio5), pos1, radius5* cos((14+factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((15+factor4)*ratio5), pos1, radius5* cos((15+factor4)*ratio5)), 1, POINT_SPACING),//pix51
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((16-factor4)*ratio5), pos1, radius5* cos((16-factor4)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((17-factor1)*ratio5), pos1, radius5* cos((17-factor1)*ratio5)), 1, POINT_SPACING),
+    new EnvelopModel.Config.Rail(new PVector(radius5* sin((18-factor2)*ratio5), pos1, radius5* cos((18-factor2)*ratio5)), 1, POINT_SPACING),//pix54
+    
+    
     
      };
   
@@ -464,9 +583,9 @@ static class Column extends LXModel {
       this.rails = new Rail[config.getRails().length];
       for (int i = 0; i < config.getRails().length; ++i) {
         EnvelopModel.Config.Rail rail = config.getRails()[i]; 
-        transform.translate(RADIUS * rail.position.x, 0, RADIUS * rail.position.z);
+        transform.translate(RADIUS * rail.position.x, rail.position.y, RADIUS * rail.position.z);
         addPoints(rails[i] = new Rail(rail, transform));
-        transform.translate(-RADIUS * rail.position.x, 0, -RADIUS * rail.position.z);
+        transform.translate(-RADIUS * rail.position.x, -rail.position.y, -RADIUS * rail.position.z);
       }
       
       // Arcs

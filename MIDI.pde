@@ -1155,6 +1155,7 @@ public class ADSR {
   @Override
     public void noteOnReceived(MidiNoteOn note) {
     int channel = note.getChannel();
+    System.out.println(channel);
     if (channel < this.railLayer.length) {
       this.railLayer[channel].envelope.engage.setValue(true);
     }

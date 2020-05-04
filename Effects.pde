@@ -365,6 +365,34 @@ public class ParCansOff extends LXEffect {
 }
 
 @LXCategory("Sub Group")
+public class PlatformHSB extends LXEffect {
+  
+  public final CompoundParameter hue = new CompoundParameter("Hue", 0, 0, 360);
+  public final CompoundParameter sat = new CompoundParameter("Sat", 100, 0, 100);
+  public final CompoundParameter bri = new CompoundParameter("Bri", 100, 0., 100);
+  
+  public PlatformHSB(LX lx) {
+    super(lx);
+    addParameter(hue);
+    addParameter(sat);
+    addParameter(bri);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    float count = 0;
+    for (LXPoint p :  model.points) { 
+      count = count +1;
+      if (count > 1536 && count <= 1608){
+      colors[p.index]= LX.hsb(hue.getValuef(),sat.getValuef(),bri.getValuef());
+      }
+    }
+  }
+}
+
+
+@LXCategory("Sub Group")
 public class SubGroupRingsOff extends LXEffect {
   
   final BooleanParameter ring1 = new BooleanParameter("Ring1");
@@ -461,3 +489,332 @@ public class Kaleidescope extends LXEffect {
     }
   }
 }*/
+
+@LXCategory("Dim")
+public class ParDim extends LXEffect {
+  
+  public final CompoundParameter Dim = new CompoundParameter("ParDim", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public ParDim(LX lx) {
+    super(lx);
+    addParameter(Dim);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    for (LXPoint p :  model.points) {
+      ++cnt;
+      if ( cnt > 1608){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim.getValuef()));
+      }
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class PlatformDim extends LXEffect {
+  
+  public final CompoundParameter Dim = new CompoundParameter("PlatformDim", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public PlatformDim (LX lx) {
+    super(lx);
+    addParameter(Dim);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    for (LXPoint p :  model.points) {
+      ++cnt;
+      if (cnt > 1536 && cnt <= 1608){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim.getValuef()));
+      }
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class TubeDim extends LXEffect {
+  
+  public final CompoundParameter Dim = new CompoundParameter("TubeDim", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public TubeDim(LX lx) {
+    super(lx);
+    addParameter(Dim);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    for (LXPoint p :  model.points) {
+      ++cnt;
+      if (cnt <= 1536 ){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim.getValuef()));
+      }
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class OutRingDim extends LXEffect {
+  
+  public final CompoundParameter Dim = new CompoundParameter("OutRingDim", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public OutRingDim (LX lx) {
+    super(lx);
+    addParameter(Dim);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    for (LXPoint p :  model.points) {
+      ++cnt;
+      if (cnt > 1612 && cnt <= 1616){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim.getValuef()));
+      }
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class InRingDim extends LXEffect {
+  
+  public final CompoundParameter Dim = new CompoundParameter("InRingDim", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public InRingDim (LX lx) {
+    super(lx);
+    addParameter(Dim);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    for (LXPoint p :  model.points) {
+      ++cnt;
+      if (cnt > 1608 && cnt <= 1612){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim.getValuef()));
+      }
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class SingleParDim extends LXEffect {
+  
+  public final CompoundParameter Dim1 = new CompoundParameter("Dim1", 1., 0., 1.);
+  public final CompoundParameter Dim2 = new CompoundParameter("Dim2", 1., 0., 1.);
+  public final CompoundParameter Dim3 = new CompoundParameter("Dim3", 1., 0., 1.);
+  public final CompoundParameter Dim4 = new CompoundParameter("Dim4", 1., 0., 1.);
+  public final CompoundParameter Dim5 = new CompoundParameter("Dim5", 1., 0., 1.);
+  public final CompoundParameter Dim6 = new CompoundParameter("Dim6", 1., 0., 1.);
+  public final CompoundParameter Dim7 = new CompoundParameter("Dim7", 1., 0., 1.);
+  public final CompoundParameter Dim8 = new CompoundParameter("Dim8", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public SingleParDim (LX lx) {
+    super(lx);
+    addParameter(Dim1);
+    addParameter(Dim2);
+    addParameter(Dim3);
+    addParameter(Dim4);
+    addParameter(Dim5);
+    addParameter(Dim6);
+    addParameter(Dim7);
+    addParameter(Dim8);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    for (LXPoint p :  model.points) {
+      ++cnt;
+      if (cnt == 1609){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim1.getValuef()));
+      } else if (cnt == 1610){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim2.getValuef()));
+      } else if (cnt == 1611){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim3.getValuef()));
+      } else if (cnt == 1612){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim4.getValuef()));
+      } else if (cnt == 1613){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim5.getValuef()));
+      } else if (cnt == 1614){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim6.getValuef()));
+      } else if (cnt == 1615){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim7.getValuef()));
+      } else if (cnt == 1616){
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim8.getValuef()));
+      }
+    }
+  }
+}  
+@LXCategory("Dim")
+public class RingDim extends LXEffect {
+  
+  public final CompoundParameter Dim1 = new CompoundParameter("RingDim1", 1., 0., 1.);
+  public final CompoundParameter Dim2 = new CompoundParameter("RingDim2", 1., 0., 1.);
+  public final CompoundParameter Dim3 = new CompoundParameter("RingDim3", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public RingDim (LX lx) {
+    super(lx);
+    addParameter(Dim1);
+    addParameter(Dim2);
+    addParameter(Dim3);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    int rCnt = 0;
+    for (LXPoint p :  model.points) {
+      
+      if (cnt%32 == 0 && cnt != 0){
+        ++rCnt;
+      }  
+      ++cnt;
+      if (rCnt == 5 || rCnt == 6 || rCnt == 7 || rCnt == 21 || rCnt == 22 || rCnt == 23 ||
+        rCnt == 29 || rCnt == 30 || rCnt == 31 || rCnt == 45 || rCnt == 46 || rCnt == 47) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim1.getValuef()));
+      } else if (rCnt == 3 || rCnt == 4 || rCnt == 12 || rCnt == 13 || rCnt == 14 || rCnt == 15 || rCnt == 19 || rCnt == 20 ||
+        rCnt == 27 || rCnt == 28 || rCnt == 36 || rCnt == 37 || rCnt == 38 || rCnt == 39 || rCnt == 43 || rCnt == 44 ) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim2.getValuef()));
+      } else if (cnt == 1611){ } else if (rCnt == 0 || rCnt == 1 || rCnt == 2 || rCnt == 8 || rCnt == 9 || rCnt == 10 || rCnt == 11 || rCnt == 16 || rCnt == 17 || rCnt == 18 ||
+        rCnt == 24 || rCnt == 25 || rCnt == 26 || rCnt == 32 || rCnt == 33 || rCnt == 34 || rCnt == 35 || rCnt == 40 || rCnt == 41 || rCnt == 42) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim3.getValuef()));
+      }       
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class SectionDim extends LXEffect {
+  
+  public final CompoundParameter Dim1 = new CompoundParameter("SectionDim1", 1., 0., 1.);
+  public final CompoundParameter Dim2 = new CompoundParameter("SectionDim2", 1., 0., 1.);
+  public final CompoundParameter Dim3 = new CompoundParameter("SectionDim3", 1., 0., 1.);
+  public final CompoundParameter Dim4 = new CompoundParameter("SectionDim4", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public SectionDim (LX lx) {
+    super(lx);
+    addParameter(Dim1);
+    addParameter(Dim2);
+    addParameter(Dim3);
+    addParameter(Dim4);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    int rCnt = 0;
+    for (LXPoint p :  model.points) {
+      
+      if (cnt%32 == 0 && cnt != 0){
+        ++rCnt;
+      }  
+      ++cnt;
+      if (rCnt == 0 || rCnt == 1 || rCnt == 2 || rCnt == 3 || rCnt == 4 || rCnt == 5 ||
+        rCnt == 6 || rCnt == 7 || rCnt == 10 || rCnt == 11 || rCnt == 14 || rCnt == 15) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim1.getValuef()));
+      } else if (rCnt == 8 || rCnt == 9 || rCnt == 12 || rCnt == 13 || rCnt == 16 || rCnt == 17 ||
+        rCnt == 18 || rCnt == 19 || rCnt == 20 || rCnt == 21 || rCnt == 22 || rCnt == 23) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim2.getValuef()));
+       } else if (rCnt == 24 || rCnt == 25 || rCnt == 26 || rCnt == 27 || rCnt == 28 || rCnt == 29 ||
+        rCnt == 30 || rCnt == 31 || rCnt == 34 || rCnt == 35 || rCnt == 38 || rCnt == 39) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim3.getValuef()));
+       } else if (rCnt ==32 || rCnt == 33 || rCnt == 36 || rCnt == 37 || rCnt == 40 || rCnt == 41 ||
+        rCnt == 42 || rCnt == 43 || rCnt == 44 || rCnt == 45 || rCnt == 46 || rCnt == 47) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim4.getValuef()));
+      }       
+    }
+  }
+}
+
+@LXCategory("Dim")
+public class InOutDim extends LXEffect {
+  
+  public final CompoundParameter Dim1 = new CompoundParameter("InOutDim1", 1., 0., 1.);
+  public final CompoundParameter Dim2 = new CompoundParameter("InOutDim2", 1., 0., 1.);
+  public final CompoundParameter Dim3 = new CompoundParameter("InOutDim3", 1., 0., 1.);
+  
+  private final int[] buffer = new ModelBuffer(lx).getArray();
+  
+  public InOutDim (LX lx) {
+    super(lx);
+    addParameter(Dim1);
+    addParameter(Dim2);
+    addParameter(Dim3);
+  }
+  
+  
+  @Override
+  public void run(double deltaMs, double amount) {
+    int cnt = 0;
+    int rCnt = 0;
+    for (LXPoint p :  model.points) {
+      
+      if (cnt%32 == 0 && cnt != 0){
+        ++rCnt;
+      }  
+      ++cnt;
+      if (rCnt == 2 || rCnt == 4 || rCnt == 5 || rCnt == 7 || rCnt == 9 || rCnt == 10 ||
+        rCnt == 13 || rCnt == 14 || rCnt == 16 || rCnt == 19 || rCnt == 21 || rCnt == 23 ||
+        rCnt == 26 || rCnt == 28 || rCnt == 29 || rCnt == 31 || rCnt == 33 || rCnt == 34 ||
+        rCnt == 37 || rCnt == 38 || rCnt == 40 || rCnt == 43 || rCnt == 45 || rCnt == 47) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim1.getValuef()));
+       } else if (rCnt == 1 || rCnt == 3 || rCnt == 6 || rCnt == 8 || rCnt == 11 || rCnt == 12 || rCnt == 15 || rCnt == 17 || rCnt == 20 || rCnt == 22 ||
+        rCnt == 25 || rCnt == 27 || rCnt == 30 || rCnt == 32 || rCnt == 35 || rCnt == 36 || rCnt == 39 || rCnt == 41 || rCnt == 44 || rCnt == 46 ) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim2.getValuef()));
+      } else if (rCnt == 0 || rCnt == 18 || rCnt == 24 || rCnt == 42) {
+        buffer[p.index]= LX.hsb(1,1,0);
+        colors[p.index] = min(360,LXColor.lerp(buffer[p.index], colors[p.index], Dim3.getValuef()));
+      }       
+    }
+  }
+}

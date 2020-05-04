@@ -262,12 +262,12 @@ public class EnvelopShimmer extends EnvelopPattern {
 @LXCategory("Spatial")
 public static class TwoObjects extends LXPattern {
   
-  final CompoundParameter X1 = new CompoundParameter("XThing1", 0, model.xMin, model.xMax);
-  final CompoundParameter Z1 = new CompoundParameter("ZThing1", 0, model.zMin, model.zMax);
+  final CompoundParameter X1 = new CompoundParameter("XThing1", 0, model.xMin*3, model.xMax*3);
+  final CompoundParameter Z1 = new CompoundParameter("ZThing1", 0, model.zMin*3, model.zMax*3);
   final CompoundParameter intensity1 = new CompoundParameter("Int1", 100, 0, 100);
   final CompoundParameter spread1 = new CompoundParameter("Sprd1", 0.2 , 0, 2);
-  final CompoundParameter X2 = new CompoundParameter("XThing2", 0, model.xMin, model.xMax);
-  final CompoundParameter Z2 = new CompoundParameter("ZThing2", 0, model.zMin, model.zMax);
+  final CompoundParameter X2 = new CompoundParameter("XThing2", 0, model.xMin*3, model.xMax*3);
+  final CompoundParameter Z2 = new CompoundParameter("ZThing2", 0, model.zMin*3, model.zMax*3);
   final CompoundParameter intensity2 = new CompoundParameter("Int2", 100, 0, 100);
   final CompoundParameter spread2 = new CompoundParameter("Sprd2", 0.2, 0, 2);
   final CompoundParameter hue1 = new CompoundParameter("Hue1", 0, 0, 360);

@@ -77,7 +77,7 @@ abstract class UIVenue extends UI3dComponent {
 class UISatellite extends UIVenue {
   public void drawFloor(UI ui, PGraphics pg) {
      //floor
-    pg.translate(0, -4*INCHES, 0);
+    pg.translate(0, -10*INCHES, 0);
     pg.box(FLOOR_SIZE_X, FLOOR_SIZE_Y, FLOOR_SIZE_Z);
     pg.translate(0, 0, 0);
     
@@ -96,9 +96,9 @@ class UISatellite extends UIVenue {
     pg.translate(40*FEET, -5.2*FEET, 35*FEET);
     
     // Stage
-    pg.translate(0, STAGE_SIZE_Y/2 + (2*INCHES), 0);
-    pg.box(STAGE_SIZE_X, STAGE_SIZE_Y, STAGE_SIZE_Z);
-    pg.translate(0, -STAGE_SIZE_Y/2 + (2*INCHES), 0);
+    //pg.translate(0, STAGE_SIZE_Y/2 + (2*INCHES), 0);
+    //pg.box(STAGE_SIZE_X, STAGE_SIZE_Y, STAGE_SIZE_Z);
+    //pg.translate(0, -STAGE_SIZE_Y/2 + (2*INCHES), 0);
     
   }
 }
